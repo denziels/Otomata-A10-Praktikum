@@ -17,6 +17,8 @@
 
 # Soal 2 - FSM
 
+<img width="716" height="536" alt="Screenshot 2026-04-26 at 18 15 24" src="https://github.com/user-attachments/assets/200ec61c-9d06-4282-acf3-46d96a7a5a3f" />
+
 ## Deskripsi
 
 Membuat program FSM (*Finite State Machine*) yang dapat mengecek apakah sebuah input string merupakan anggota dari bahasa yang ditentukan.
@@ -54,7 +56,8 @@ Membuat program FSM (*Finite State Machine*) yang dapat mengecek apakah sebuah i
 
 ## Input
 
-### Tipe Data: String (deretan karakter).
+### Tipe Data: 
+String (deretan karakter)
 
 ### Format dan Batasan (Validasi): 
 Input hanya diperbolehkan berupa kombinasi angka `0` dan `1` (merupakan alfabet/himpunan simbol dari bahasa L)
