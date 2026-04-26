@@ -6,7 +6,9 @@
 | Bramantya Saputra   | 5025241098   | 
 | Denzel Daniels  | 5025241228   |
 
-# Soal 1 - (nama)
+# Soal 1 - FSA Multi-Language Scanner / Lexical Analyzer 
+
+<img width="967" height="654" alt="image" src="https://github.com/user-attachments/assets/203a2ef2-4ec7-4e35-a5e4-e8717fc90e9d" />
 
 ## Deskripsi
 Multi-Language Scanner / Lexical Analyzer adalah sebuah perangkat lunak berbasis web yang berfungsi untuk melakukan analisis leksikal (lexing) terhadap source code C, C++, dan Python. Program ini implementasi dari konsep Finite State Automata (FSA) dalam teori otomata, setiap karakter dalam kode input dibaca dan dikelompokkan ke dalam kategori token yang sesuai berdasarkan aturan sintaksis masing-masing bahasa.
