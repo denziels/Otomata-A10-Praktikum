@@ -30,15 +30,11 @@ Membuat program FSM (*Finite State Machine*) yang dapat mengecek apakah sebuah i
 - dan x **tidak memiliki substring 00**  
 **}**
 
----
-
 ### Syarat Penerimaan (Acceptance)
 
 1. Input hanya boleh berisi karakter `0` dan `1`.
 2. Karakter paling akhir harus `1`.
 3. Tidak boleh ada dua angka nol yang berurutan (`00`) di dalam string.
-
----
 
 ### Analisis Diagram FSM
 
@@ -58,3 +54,13 @@ Membuat program FSM (*Finite State Machine*) yang dapat mengecek apakah sebuah i
 - **State C (Trap / Dead State)**  
   Jika mesin membaca substring `00`, mesin akan masuk ke state ini dan tidak bisa keluar lagi (terperangkap).  
   Sehingga otomatis ditolak (karena bukan final state).
+
+## Input
+
+### Tipe Data: String (deretan karakter).
+
+### Format dan Batasan (Validasi): Input hanya diperbolehkan berupa kombinasi angka `0` dan `1` (merupakan alfabet/himpunan simbol dari bahasa L).
+- Input tidak boleh dibiarkan kosong (tekan Enter tanpa teks).
+- Input tidak boleh mengandung spasi, huruf (abjad), atau angka selain 0 dan 1.
+
+### Pengguna mengetikkan string secara langsung ketika program meminta: `Masukkan string (0 atau 1) : .`
