@@ -83,3 +83,12 @@ Program mencetak state terakhir tempat mesin berhenti setelah seluruh input sele
 
 ### Pesan Error (Pengecualian):
 Jika pengguna memasukkan input di luar batasan (misal: "`abc`" atau "`123`"), output yang keluar adalah pesan peringatan: -> `ERROR: Input tidak valid! Hanya masukkan angka 0 dan 1.` dan mesin tidak akan memprosesnya.
+
+## Contoh Pengujian FSM
+
+| Input String | Jejak State (Path)     | State Akhir | Output (Kesimpulan) | Alasan Berdasarkan Logika FSM |
+|--------------|------------------------|-------------|---------------------|--------------------------------|
+| 101          | S -> B -> A -> B       | B           | DITERIMA            | Berakhir 1 dan tidak ada angka 0 berurutan. Berhenti di Final State B. |
+| 1001         | S -> B -> A -> C -> C  | C           | DITOLAK             | Terdapat substring 00 yang membuat mesin terperangkap di Dead State C. |
+| 10           | S -> A -> B -> A       | A           | DITOLAK             | Meskipun tidak ada 00, namun string berakhir 0, sehingga mesin berhenti di State A (bukan Final State). |
+| abc          | (Tidak ada jejak)      | -           | ERROR               | String mengandung karakter selain 0 dan 1, ditolak oleh sistem validasi. |
