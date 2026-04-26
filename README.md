@@ -14,8 +14,6 @@
 
 ## Output
 
-## Screenshot
-
 
 # Soal 2 - FSM
 
@@ -66,7 +64,8 @@ Membuat program FSM (*Finite State Machine*) yang dapat mengecek apakah sebuah i
 
 ## Output
 
-### Jejak State (State Path): Program menampilkan urutan transisi atau perpindahan state dari awal pembacaan karakter pertama hingga karakter terakhir. Ini berfungsi sebagai bukti langkah-langkah mesin dalam mengeksekusi string sesuai diagram. (Contoh: S -> A -> B).
+### Jejak State (State Path): 
+Program menampilkan urutan transisi atau perpindahan state dari awal pembacaan karakter pertama hingga karakter terakhir. Ini berfungsi sebagai bukti langkah-langkah mesin dalam mengeksekusi string sesuai diagram. (Contoh: S -> A -> B).
 
 ### State Akhir (Final Destination):
 Program mencetak state terakhir tempat mesin berhenti setelah seluruh input selesai dibaca. Ini menjadi penentu utama status penerimaan.
