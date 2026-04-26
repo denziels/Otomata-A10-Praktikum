@@ -61,7 +61,8 @@ Input hanya diperbolehkan berupa kombinasi angka `0` dan `1` (merupakan alfabet/
 - Input tidak boleh dibiarkan kosong (tekan Enter tanpa teks).
 - Input tidak boleh mengandung spasi, huruf (abjad), atau angka selain 0 dan 1.
 
-### Pengguna mengetikkan string secara langsung ketika program meminta: `Masukkan string (0 atau 1) : .`
+### Pengguna mengetikkan string secara langsung ketika program meminta: 
+`Masukkan string (0 atau 1) :`
 
 ## Output
 
@@ -78,4 +79,4 @@ Program mencetak state terakhir tempat mesin berhenti setelah seluruh input sele
 - `[ DITOLAK ]`: Ditampilkan jika mesin berhenti di State S, A, atau C. Artinya, string tersebut bukan anggota bahasa L karena melanggar aturan (entah berakhiran '0' atau terperangkap di state C karena ada substring '00').
 
 ### Pesan Error (Pengecualian):
-Jika pengguna memasukkan input di luar batasan (misal: "abc" atau "123"), output yang keluar adalah pesan peringatan: -> ERROR: Input tidak valid! Hanya masukkan angka 0 dan 1. dan mesin tidak akan memprosesnya.
+Jika pengguna memasukkan input di luar batasan (misal: "`abc`" atau "`123`"), output yang keluar adalah pesan peringatan: -> `ERROR: Input tidak valid! Hanya masukkan angka 0 dan 1.` dan mesin tidak akan memprosesnya.
