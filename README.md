@@ -56,7 +56,8 @@ Membuat program FSM (*Finite State Machine*) yang dapat mengecek apakah sebuah i
 
 ### Tipe Data: String (deretan karakter).
 
-### Format dan Batasan (Validasi): Input hanya diperbolehkan berupa kombinasi angka `0` dan `1` (merupakan alfabet/himpunan simbol dari bahasa L).
+### Format dan Batasan (Validasi): 
+Input hanya diperbolehkan berupa kombinasi angka `0` dan `1` (merupakan alfabet/himpunan simbol dari bahasa L)
 - Input tidak boleh dibiarkan kosong (tekan Enter tanpa teks).
 - Input tidak boleh mengandung spasi, huruf (abjad), atau angka selain 0 dan 1.
 
@@ -72,9 +73,9 @@ Program mencetak state terakhir tempat mesin berhenti setelah seluruh input sele
 
 ### Kesimpulan (Status Penerimaan):
 
-`[ DITERIMA ]`: Ditampilkan jika mesin berhenti di State B (karena B adalah satu-satunya Accept / Final State). Artinya, string tersebut adalah anggota dari bahasa L (diakhiri '1' dan tidak memiliki '00').
+- `[ DITERIMA ]`: Ditampilkan jika mesin berhenti di State B (karena B adalah satu-satunya Accept / Final State). Artinya, string tersebut adalah anggota dari bahasa L (diakhiri '1' dan tidak memiliki '00').
 
-`[ DITOLAK ]`: Ditampilkan jika mesin berhenti di State S, A, atau C. Artinya, string tersebut bukan anggota bahasa L karena melanggar aturan (entah berakhiran '0' atau terperangkap di state C karena ada substring '00').
+- `[ DITOLAK ]`: Ditampilkan jika mesin berhenti di State S, A, atau C. Artinya, string tersebut bukan anggota bahasa L karena melanggar aturan (entah berakhiran '0' atau terperangkap di state C karena ada substring '00').
 
 ### Pesan Error (Pengecualian):
 Jika pengguna memasukkan input di luar batasan (misal: "abc" atau "123"), output yang keluar adalah pesan peringatan: -> ERROR: Input tidak valid! Hanya masukkan angka 0 dan 1. dan mesin tidak akan memprosesnya.
