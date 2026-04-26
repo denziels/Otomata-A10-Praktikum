@@ -6,14 +6,47 @@
 | Bramantya Saputra   | 5025241098   | 
 | Denzel Daniels  | 5025241228   |
 
-# Soal 1 - (nama)
+# Soal 1 - FSA Multi-Language Scanner / Lexical Analyzer 
+
+<img width="967" height="654" alt="image" src="https://github.com/user-attachments/assets/203a2ef2-4ec7-4e35-a5e4-e8717fc90e9d" />
 
 ## Deskripsi
-
+Multi-Language Scanner / Lexical Analyzer adalah sebuah perangkat lunak berbasis web yang berfungsi untuk melakukan analisis leksikal (lexing) terhadap source code C, C++, dan Python. Program ini implementasi dari konsep Finite State Automata (FSA) dalam teori otomata, setiap karakter dalam kode input dibaca dan dikelompokkan ke dalam kategori token yang sesuai berdasarkan aturan sintaksis masing-masing bahasa.
 ## Input
+### Mekanisme Input
+Program menerima input berupa teks mentah (raw string) yang dimasukkan pengguna melalui area teks di antarmuka web.
+
+*Komponen input:*
+1. *Selection (Dropdown):* Pengguna memilih target bahasa pemrograman (C, C++, atau Python). Pilihan ini akan menentukan tabel transisi/aturan yang digunakan oleh mesin scanner.
+2. *Code Area (Textarea):* Pengguna menempelkan atau mengetikkan kode sumber yang ingin dianalisis.
+3. *Action Trigger:* Tombol "Proses Token" yang memicu fungsi JavaScript untuk mulai memindai teks dari indeks 0 hingga akhir karakter.
+
+### Contoh Input:
+#include <iostream>
+int main() {
+    int angka = 10;
+    return 0;
+}
 
 ## Output
+Output adalah berupa visualisasi kartu kategori yang memisahkan setiap token yang ditemukan secara unik (distinct).
 
+*Kategori Output:*
+- Reserve Words: Menampilkan kata kunci yang telah dipesan oleh bahasa (misal: if, while, def, int).
+- Preprocessor: (Khusus C/C++) Menampilkan direktif seperti #include atau #define.
+- Simbol & Tanda Baca: Menampilkan operator aritmatika, logika, serta tanda baca seperti kurung, koma, dan titik koma.
+- Variabel: Menampilkan nama identifier yang ditentukan oleh pengguna.
+- Ekspresi Matematika/Literal: Menampilkan nilai numerik (integer maupun float).
+- String/Header: Menampilkan teks di dalam tanda kutip atau nama pustaka di dalam < >.
+- Error Log: Menampilkan pesan peringatan jika ditemukan karakter ilegal yang tidak dikenali oleh alfabet bahasa yang dipilih.
+
+### Contoh Output:
+- Preprocessor: #include
+- String/Header: <iostream>
+- Reserve Words: int, return, main
+- Variabel: angka
+- Simbol & Tanda Baca: =, ;, {, }, (, )
+- Ekspresi Matematika: 10, 0
 
 # Soal 2 - FSM
 
