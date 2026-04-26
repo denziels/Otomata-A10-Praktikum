@@ -1,1 +1,1 @@
-# Otomata-A10-Praktikum
+# Otomata Kelompok A10 - Praktikum
