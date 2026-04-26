@@ -4,7 +4,7 @@
     return False, "Input tidak valid! Hanya masukkan angka 0 dan 1.", []
 ```
 
-# Definisi Tabel:
+# Definisi Tabel FSM:
 ```
 transitions = {
     'S': {'0': 'A', '1': 'B'},
