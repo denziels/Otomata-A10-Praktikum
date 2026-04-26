@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Multi-Language Lexical Analyzer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 20px;
+            background-color: #eceff1;
+            color: #37474f;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            color: #1565c0;
+            border-bottom: 3px solid #1565c0;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        select,
+        button {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #cfd8dc;
+            font-size: 14px;
+        }
+
+        select {
+            background: #fff;
+            flex-grow: 1;
+            cursor: pointer;
+        }
+
+        button {
+            background-color: #1e88e5;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #1565c0;
+        }
+
+        textarea {
+            width: 100%;
+            height: 250px;
+            padding: 15px;
+            border: 1px solid #cfd8dc;
+            border-radius: 8px;
+            font-family: 'Consolas', monospace;
+            box-sizing: border-box;
+            font-size: 14px;
+            background: #fafafa;
+        }
+
+        .results {
+            margin-top: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .category-box {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.02);
+        }
+
+        .category-title {
+            font-weight: bold;
+            color: #1565c0;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 8px;
+            display: block;
+            font-size: 15px;
+        }
+
+        .token-list {
+            word-break: break-all;
+            color: #455a64;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .error-log {
+            color: #d32f2f;
+            font-family: monospace;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 2px;
+            font-size: 12px;
+            border: 1px solid #bbdefb;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Multi-Language Scanner / Lexical Analyzer</h2>
+
+        <div class="controls">
+            <label for="langSelect">Pilih Bahasa Pemrograman:</label>
+            <select id="langSelect">
+                <option value="cpp">C++ (ISO Standard)</option>
+                <option value="c">C Language (ANSI C)</option>
+                <option value="python">Python 3.x</option>
+            </select>
+            <button onclick="analyzeCode()">Proses Token</button>
+        </div>
+
+        <textarea id="codeInput" placeholder="Tempelkan code di sini..."></textarea>
+        <div id="errorLog" class="error-log"></div>
+
+        <div class="results" id="resultDisplay"></div>
+    </div>
+
+    <script>
+        const languageRules = {
+            cpp: {
+                reserved: /\b(auto|bool|break|case|catch|char|class|const|constexpr|continue|default|delete|do|double|else|enum|explicit|extern|false|float|for|friend|goto|if|inline|int|long|namespace|new|nullptr|operator|private|protected|public|register|return|short|signed|sizeof|static|struct|switch|template|this|throw|true|try|typedef|typename|union|unsigned|using|virtual|void|volatile|while|std|cout|cin|endl|string|vector|main)\b/g,
+                math: /\d+(\.\d+)?([eE][+-]?\d+)?[fFlLuU]*/g,
+                operators: /(<<|>>|::|->|\+\+|--|&&|\|\||==|!=|<=|>=|[-+*/%=<>&|^~!])/g
+            },
+            c: {
+                reserved: /\b(auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|int|long|register|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|printf|scanf|main|size_t)\b/g,
+                math: /\d+(\.\d+)?([eE][+-]?\d+)?[fFlLuU]*/g,
+                operators: /(->|\+\+|--|==|!=|<=|>=|&&|\|\||[-+*/%=<>&|^~!])/g
+            },
+            python: {
+                reserved: /\b(False|None|True|and|as|assert|async|await|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield|print|range|len|list|dict|set|int|str|float)\b/g,
+                math: /\d+(\.\d+)?([eE][+-]?\d+)?/g,
+                operators: /(\*\*|\/\/|<<|>>|==|!=|<=|>=|[-+*/%=<>&|^~])/g
+            }
+        };
+
+        function analyzeCode() {
+            const code = document.getElementById('codeInput').value;
+            const lang = document.getElementById('langSelect').value;
+            const display = document.getElementById('resultDisplay');
+            const errorLog = document.getElementById('errorLog');
+
+            display.innerHTML = "";
+            errorLog.innerHTML = "";
+
+            const rules = languageRules[lang];
+            const patterns = [
+                { name: 'String/Header', pattern: /"[^"]*"|'[^']*'|<[a-zA-Z0-9._]+>/g },
+                { name: 'Reserve Words', pattern: rules.reserved },
+                { name: 'Ekspresi Matematika/Literal', pattern: rules.math },
+                { name: 'Simbol & Tanda Baca', pattern: rules.operators },
+                { name: 'Simbol Lain', pattern: /[()\[\]{},;.:#]/g },
+                { name: 'Variabel', pattern: /[a-zA-Z_][a-zA-Z0-9_]*/g },
+                { name: 'SKIP', pattern: /[ \t\n\r]+/g },
+                { name: 'MISMATCH', pattern: /./g }
+            ];
+
+            if (lang == 'c' || lang == 'cpp') {
+                patterns.unshift({
+                    name: 'Preprocessor',
+                    pattern: /#\s*(include|define|ifdef|ifndef|endif|pragma)/g
+                })
+            } else if (lang == 'python') {
+                patterns.unshift({
+                    name: 'SKIP',
+                    pattern: /#.*$/gm
+                })
+            }
+
+            const results = {
+                "Reserve Words": new Set(),
+                "Preprocessor": new Set(),
+                "Simbol & Tanda Baca": new Set(),
+                "Variabel": new Set(),
+                "Ekspresi Matematika/Literal": new Set(),
+                "String/Header": new Set()
+            };
+
+            let pos = 0;
+            while (pos < code.length) {
+                let matched = false;
+                for (const { name, pattern } of patterns) {
+                    pattern.lastIndex = pos;
+                    const res = pattern.exec(code);
+
+                    if (res && res.index === pos) {
+                        const val = res[0];
+                        if (results[name]) results[name].add(val);
+                        else if (name === 'Simbol Lain') results["Simbol & Tanda Baca"].add(val);
+                        else if (name === 'MISMATCH' && !/\s/.test(val)) {
+                            errorLog.innerHTML += `Karakter ilegal: "${val}" di index ${pos} <br>`;
+                        }
+                        pos += val.length;
+                        matched = true;
+                        break;
+                    }
+                }
+                if (!matched) pos++;
+            }
+
+            for (const [cat, tokens] of Object.entries(results)) {
+                const box = document.createElement('div');
+                box.className = 'category-box';
+                let html = `<span class="category-title">${cat}</span><div class="token-list">`;
+                if (tokens.size > 0) {
+                    tokens.forEach(t => { html += `<span class="tag">${escapeHtml(t)}</span>`; });
+                } else {
+                    html += '-';
+                }
+                html += `</div>`;
+                box.innerHTML = html;
+                display.appendChild(box);
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+
+</html>
