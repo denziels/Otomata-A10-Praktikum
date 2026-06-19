@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pushdown Automata Simulator</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg2: #f5f5f3;
+      --bg3: #efefec;
+      --text: #1a1a18;
+      --text2: #6b6b66;
+      --text3: #9b9b94;
+      --border: rgba(0,0,0,0.12);
+      --border2: rgba(0,0,0,0.22);
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      --blue-bg: #E6F1FB;
+      --blue-text: #042C53;
+      --blue-border: #185FA5;
+      --green-bg: #EAF3DE;
+      --green-text: #173404;
+      --green-border: #3B6D11;
+      --red-bg: #FCEBEB;
+      --red-text: #501313;
+      --red-border: #A32D2D;
+      --amber-bg: #FAEEDA;
+      --amber-text: #412402;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1e1e1c;
+        --bg2: #272725;
+        --bg3: #303030;
+        --text: #e8e6de;
+        --text2: #9b9b94;
+        --text3: #6b6b66;
+        --border: rgba(255,255,255,0.10);
+        --border2: rgba(255,255,255,0.20);
+        --blue-bg: #042C53;
+        --blue-text: #B5D4F4;
+        --blue-border: #378ADD;
+        --green-bg: #173404;
+        --green-text: #C0DD97;
+        --green-border: #639922;
+        --red-bg: #501313;
+        --red-text: #F7C1C1;
+        --red-border: #E24B4A;
+        --amber-bg: #412402;
+        --amber-text: #FAC775;
+      }
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg3);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px 48px;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .app-header {
+      margin-bottom: 24px;
+    }
+    .app-header h1 {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .app-header p {
+      font-size: 14px;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    /* Lang chips */
+    .lang-select {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .lang-chip {
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      border: 0.5px solid var(--border2);
+      background: none;
+      cursor: pointer;
+      color: var(--text2);
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+    }
+    .lang-chip:hover { color: var(--text); background: var(--bg2); }
+    .lang-chip.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+    /* Lang info */
+    .lang-info {
+      background: var(--bg2);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.7;
+      margin-bottom: 16px;
+      border: 0.5px solid var(--border);
+    }
+    .lang-info code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background: var(--bg);
+      padding: 1px 5px;
+      border-radius: 3px;
+      border: 0.5px solid var(--border2);
+      color: var(--text);
+    }
+
+    /* Card */
+    .card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 2px;
+      border-bottom: 0.5px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .tab-btn {
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text2);
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.15s;
+      font-family: var(--font-sans);
+    }
+    .tab-btn.active { color: var(--text); border-bottom-color: var(--text); }
+    .tab-btn:hover:not(.active) { color: var(--text); }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* Input row */
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+      margin-bottom: 12px;
+    }
+    .input-row input {
+      flex: 1;
+      font-size: 15px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.08em;
+      padding: 0 12px;
+      height: 40px;
+      border: 0.5px solid var(--border2);
+      border-radius: var(--radius-md);
+      background: var(--bg2);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .input-row input:focus { border-color: var(--blue-border); box-shadow: 0 0 0 3px rgba(55,138,221,0.15); }
+
+    .btn-primary {
+      height: 40px;
+      padding: 0 20px;
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-sans);
+      transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-secondary {
+      height: 40px;
+      padding: 0 14px;
+      background: none;
+      border: 0.5px solid var(--border2);
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      color: var(--text2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-sans);
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .btn-secondary:hover { background: var(--bg2); color: var(--text); }
+    .btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Step controls */
+    .step-controls {
+      display: none;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .step-progress {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text2);
+      flex: 1;
+      min-width: 80px;
+    }
+    .step-bar {
+      flex: 1;
+      height: 4px;
+      background: var(--bg2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .step-fill {
+      height: 100%;
+      background: #378ADD;
+      border-radius: 2px;
+      transition: width 0.3s;
+    }
+
+    /* Result banner */
+    .result-banner {
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 14px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+    .result-banner.accepted {
+      background: var(--green-bg);
+      color: var(--green-text);
+      border: 0.5px solid var(--green-border);
+      display: flex;
+    }
+    .result-banner.rejected {
+      background: var(--red-bg);
+      color: var(--red-text);
+      border: 0.5px solid var(--red-border);
+      display: flex;
+    }
+    .result-banner i { font-size: 20px; }
+
+    /* Sim grid */
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    @media (max-width: 580px) { .sim-grid { grid-template-columns: 1fr; } }
+
+    .panel {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 12px 14px;
+    }
+    .panel-title {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text2);
+      margin-bottom: 10px;
+    }
+
+    /* Tape */
+    .tape-wrap { overflow-x: auto; padding-bottom: 18px; }
+    .tape { display: flex; gap: 3px; min-width: max-content; }
+    .tape-cell {
+      width: 34px;
+      height: 34px;
+      border: 0.5px solid var(--border2);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-family: var(--font-mono);
+      font-weight: 500;
+      color: var(--text);
+      background: var(--bg2);
+      position: relative;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .tape-cell.current {
+      border: 1.5px solid #378ADD;
+      background: var(--blue-bg);
+      color: var(--blue-text);
+    }
+    .tape-cell.processed { opacity: 0.38; }
+    .tape-cell.empty { color: var(--text3); font-size: 12px; }
+    .tape-pointer {
+      font-size: 9px;
+      color: #378ADD;
+      position: absolute;
+      bottom: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* Stack */
+    .stack-wrap {
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 3px;
+      min-height: 80px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .stack-cell {
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: var(--font-mono);
+      font-weight: 500;
+      text-align: center;
+      border: 0.5px solid var(--border2);
+      background: var(--bg2);
+      color: var(--text);
+      transition: all 0.2s;
+    }
+    .stack-cell.new {
+      border-color: var(--green-border);
+      background: var(--green-bg);
+      color: var(--green-text);
+    }
+    .stack-bottom {
+      font-size: 11px;
+      color: var(--text3);
+      text-align: center;
+      padding-top: 5px;
+      border-top: 0.5px solid var(--border);
+      margin-top: 4px;
+    }
+    .empty-stack {
+      text-align: center;
+      padding: 18px 8px;
+      color: var(--text3);
+      font-size: 12px;
+    }
+    .empty-stack i { font-size: 22px; display: block; margin-bottom: 4px; }
+
+    /* State badge */
+    .state-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      border: 0.5px solid var(--border2);
+      background: var(--bg2);
+      color: var(--text);
+      transition: all 0.25s;
+    }
+    .state-badge.accepting {
+      background: var(--green-bg);
+      border-color: var(--green-border);
+      color: var(--green-text);
+    }
+    .state-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text3);
+    }
+    .state-badge.accepting .state-dot { background: var(--green-border); }
+
+    /* Trace */
+    .trace-list {
+      max-height: 170px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .trace-item {
+      font-size: 12px;
+      padding: 5px 8px;
+      border-radius: 4px;
+      background: var(--bg2);
+      color: var(--text2);
+      font-family: var(--font-mono);
+      line-height: 1.5;
+      border: 0.5px solid transparent;
+    }
+    .trace-item.active {
+      border-color: var(--blue-border);
+      color: var(--text);
+      background: var(--blue-bg);
+    }
+    .trace-item.error {
+      border-color: var(--red-border);
+      background: var(--red-bg);
+      color: var(--red-text);
+    }
+
+    /* Transition table */
+    .trans-table {
+      width: 100%;
+      font-size: 13px;
+      border-collapse: collapse;
+    }
+    .trans-table th {
+      font-weight: 500;
+      color: var(--text2);
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 0.5px solid var(--border2);
+      background: var(--bg2);
+      position: sticky;
+      top: 0;
+    }
+    .trans-table td {
+      padding: 7px 10px;
+      border-bottom: 0.5px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text);
+      vertical-align: middle;
+    }
+    .trans-table tr:last-child td { border-bottom: none; }
+    .trans-table tr.highlight-row td {
+      background: var(--blue-bg);
+      color: var(--blue-text);
+    }
+    .trans-table tr.highlight-row td:first-child {
+      border-left: 2px solid var(--blue-border);
+    }
+    .table-note {
+      font-size: 12px;
+      color: var(--text2);
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    /* Example pills */
+    .example-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .example-pill {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      border: 0.5px solid var(--border2);
+      transition: all 0.15s;
+    }
+    .example-pill.accept { background: var(--green-bg); color: var(--green-text); border-color: var(--green-border); }
+    .example-pill.reject { background: var(--red-bg); color: var(--red-text); border-color: var(--red-border); }
+    .example-pill:hover { opacity: 0.8; }
+
+    .example-label {
+      font-size: 11px;
+      color: var(--text3);
+      margin-bottom: 4px;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 32px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text3);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="app-header">
+    <h1>Pushdown Automata Simulator</h1>
+    <p>Simulate a PDA step by step. Observe state transitions, input processing, and stack operations in real time.</p>
+  </div>
+
+  <!-- Language selector -->
+  <div class="lang-select" id="langSelect">
+    <button class="lang-chip active" data-lang="anbn" onclick="selectLang('anbn',this)">aⁿbⁿ (n≥1)</button>
+    <button class="lang-chip" data-lang="palindrome" onclick="selectLang('palindrome',this)">Even palindromes {a,b}</button>
+    <button class="lang-chip" data-lang="balanced" onclick="selectLang('balanced',this)">Balanced parentheses</button>
+    <button class="lang-chip" data-lang="wcwr" onclick="selectLang('wcwr',this)">wc·wᴿ</button>
+  </div>
+
+  <div class="lang-info" id="langInfo"></div>
+
+  <!-- Example strings -->
+  <div class="example-label" id="exampleLabel">Quick examples — click to load:</div>
+  <div class="example-row" id="exampleRow"></div>
+
+  <!-- Main card -->
+  <div class="card">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('simulate',this)">Simulate</button>
+      <button class="tab-btn" onclick="switchTab('transitions',this)">Transition table</button>
+    </div>
+
+    <!-- Simulate tab -->
+    <div id="tab-simulate" class="tab-pane active">
+      <div class="input-row">
+        <input type="text" id="inputStr" placeholder="Enter input string…" spellcheck="false"
+          oninput="onInput()" onkeydown="if(event.key==='Enter')runSim()" autocomplete="off" />
+        <button class="btn-primary" id="runBtn" onclick="runSim()">
+          <i class="ti ti-player-play"></i> Simulate
+        </button>
+        <button class="btn-secondary" onclick="resetSim()" title="Reset">
+          <i class="ti ti-refresh"></i>
+        </button>
+      </div>
+
+      <div class="step-controls" id="stepControls">
+        <button class="btn-secondary" id="prevBtn" onclick="stepPrev()" disabled>
+          <i class="ti ti-chevron-left"></i> Back
+        </button>
+        <button class="btn-secondary" id="nextBtn" onclick="stepNext()">
+          Next <i class="ti ti-chevron-right"></i>
+        </button>
+        <button class="btn-secondary" onclick="autoPlay()" id="playBtn">
+          <i class="ti ti-player-play"></i> Auto
+        </button>
+        <div class="step-progress">
+          <div class="step-bar"><div class="step-fill" id="stepFill" style="width:0%"></div></div>
+          <span id="stepLabel">0 / 0</span>
+        </div>
+      </div>
+
+      <div class="result-banner" id="resultBanner">
+        <i class="ti" id="resultIcon"></i>
+        <span id="resultText"></span>
+      </div>
+
+      <div class="sim-grid">
+        <div class="panel">
+          <div class="panel-title">Input tape</div>
+          <div class="tape-wrap">
+            <div class="tape" id="tape">
+              <div class="tape-cell empty">–</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Current state</div>
+          <div id="stateBadge">
+            <span class="state-badge"><span class="state-dot"></span> —</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Stack <span style="font-size:10px;font-weight:400;color:var(--text3)">(top → bottom)</span></div>
+          <div class="stack-wrap" id="stackArea">
+            <div class="empty-stack"><i class="ti ti-stack-2"></i>empty</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Transition trace</div>
+          <div class="trace-list" id="traceList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transitions tab -->
+    <div id="tab-transitions" class="tab-pane">
+      <div id="transTableWrap" style="overflow-x:auto"></div>
+    </div>
+  </div>
+
+  <div class="footer">Pushdown Automata Simulator &nbsp;·&nbsp; HTML + CSS + JavaScript</div>
+</div>
+
+<script>
+const LANGS = {
+  anbn: {
+    name: 'aⁿbⁿ',
+    desc: 'Accepts strings of the form <code>aⁿbⁿ</code> where n ≥ 1. Push one <code>A</code> for each <code>a</code> read, then pop one <code>A</code> for each <code>b</code>. Accept if stack holds only the bottom marker at end.',
+    examples: [
+      {str:'ab',accept:true},{str:'aabb',accept:true},{str:'aaabbb',accept:true},{str:'aaaabbbb',accept:true},
+      {str:'aab',accept:false},{str:'abbb',accept:false},{str:'ba',accept:false},{str:'',accept:false}
+    ],
+    states: ['q0','q1','q2'],
+    acceptStates: new Set(['q2']),
+    startState: 'q0',
+    startStack: ['Z'],
+    transitions: [
+      {from:'q0',read:'a',pop:'Z',push:['A','Z'],to:'q0',label:'q0, a, Z → push A'},
+      {from:'q0',read:'a',pop:'A',push:['A','A'],to:'q0',label:'q0, a, A → push A'},
+      {from:'q0',read:'b',pop:'A',push:[],to:'q1',label:'q0, b, A → pop A → q1'},
+      {from:'q1',read:'b',pop:'A',push:[],to:'q1',label:'q1, b, A → pop A'},
+      {from:'q1',read:'',pop:'Z',push:['Z'],to:'q2',label:'q1, ε, Z → accept'},
+    ]
+  },
+  palindrome: {
+    name: 'Even palindromes {a,b}',
+    desc: 'Accepts even-length palindromes over <code>{a, b}</code>. First half is pushed onto the stack; the second half is matched and popped. Try <code>abba</code>, <code>aabbaa</code>, <code>abbaabba</code>.',
+    examples: [
+      {str:'abba',accept:true},{str:'aabbaa',accept:true},{str:'aa',accept:true},{str:'bb',accept:true},
+      {str:'ab',accept:false},{str:'aba',accept:false},{str:'abab',accept:false},{str:'a',accept:false}
+    ],
+    states: ['q0','q1','q2'],
+    acceptStates: new Set(['q2']),
+    startState: 'q0',
+    startStack: ['Z'],
+    transitions: [
+      {from:'q0',read:'a',pop:'Z',push:['a','Z'],to:'q0',label:'q0, a, Z → push a'},
+      {from:'q0',read:'b',pop:'Z',push:['b','Z'],to:'q0',label:'q0, b, Z → push b'},
+      {from:'q0',read:'a',pop:'a',push:['a','a'],to:'q0',label:'q0, a, a → push a'},
+      {from:'q0',read:'a',pop:'b',push:['a','b'],to:'q0',label:'q0, a, b → push a'},
+      {from:'q0',read:'b',pop:'a',push:['b','a'],to:'q0',label:'q0, b, a → push b'},
+      {from:'q0',read:'b',pop:'b',push:['b','b'],to:'q0',label:'q0, b, b → push b'},
+      {from:'q0',read:'',pop:'a',push:['a'],to:'q1',label:'q0, ε, a → pivot (nondeterministic)'},
+      {from:'q0',read:'',pop:'b',push:['b'],to:'q1',label:'q0, ε, b → pivot'},
+      {from:'q1',read:'a',pop:'a',push:[],to:'q1',label:'q1, a, a → pop'},
+      {from:'q1',read:'b',pop:'b',push:[],to:'q1',label:'q1, b, b → pop'},
+      {from:'q1',read:'',pop:'Z',push:['Z'],to:'q2',label:'q1, ε, Z → accept'},
+    ]
+  },
+  balanced: {
+    name: 'Balanced parentheses',
+    desc: 'Accepts strings of balanced parentheses <code>()</code> and <code>[]</code>. Each opening bracket is pushed; each closing bracket must match the top of the stack. Accept if stack is empty at end.',
+    examples: [
+      {str:'()',accept:true},{str:'(())',accept:true},{str:'([])',accept:true},{str:'([()])',accept:true},
+      {str:')(', accept:false},{str:'(]',accept:false},{str:'((()',accept:false},{str:'()[)',accept:false}
+    ],
+    states: ['q0','qacc'],
+    acceptStates: new Set(['qacc']),
+    startState: 'q0',
+    startStack: ['Z'],
+    transitions: [
+      {from:'q0',read:'(',pop:'Z',push:['(','Z'],to:'q0',label:'q0, (, Z → push ('},
+      {from:'q0',read:'(',pop:'(',push:['(','('],to:'q0',label:'q0, (, ( → push ('},
+      {from:'q0',read:'(',pop:'[',push:['(','['],to:'q0',label:'q0, (, [ → push ('},
+      {from:'q0',read:'[',pop:'Z',push:['[','Z'],to:'q0',label:'q0, [, Z → push ['},
+      {from:'q0',read:'[',pop:'(',push:['[','('],to:'q0',label:'q0, [, ( → push ['},
+      {from:'q0',read:'[',pop:'[',push:['[','['],to:'q0',label:'q0, [, [ → push ['},
+      {from:'q0',read:')',pop:'(',push:[],to:'q0',label:'q0, ), ( → pop ('},
+      {from:'q0',read:']',pop:'[',push:[],to:'q0',label:'q0, ], [ → pop ['},
+      {from:'q0',read:'',pop:'Z',push:['Z'],to:'qacc',label:'q0, ε, Z → accept'},
+    ]
+  },
+  wcwr: {
+    name: 'wc·wᴿ',
+    desc: 'Accepts strings of the form <code>wcwᴿ</code> where <code>w ∈ {a,b}*</code> and <code>wᴿ</code> is the reverse of <code>w</code>. The marker <code>c</code> is the pivot. Try <code>abcba</code>, <code>aabcbaa</code>.',
+    examples: [
+      {str:'acba',accept:false},{str:'abcba',accept:true},{str:'aabcbaa',accept:true},{str:'c',accept:true},
+      {str:'abc',accept:false},{str:'abba',accept:false},{str:'abcab',accept:false},{str:'bcb',accept:true}
+    ],
+    states: ['q0','q1','q2'],
+    acceptStates: new Set(['q2']),
+    startState: 'q0',
+    startStack: ['Z'],
+    transitions: [
+      {from:'q0',read:'a',pop:'Z',push:['a','Z'],to:'q0',label:'q0, a, Z → push a'},
+      {from:'q0',read:'b',pop:'Z',push:['b','Z'],to:'q0',label:'q0, b, Z → push b'},
+      {from:'q0',read:'a',pop:'a',push:['a','a'],to:'q0',label:'q0, a, a → push a'},
+      {from:'q0',read:'a',pop:'b',push:['a','b'],to:'q0',label:'q0, a, b → push a'},
+      {from:'q0',read:'b',pop:'a',push:['b','a'],to:'q0',label:'q0, b, a → push b'},
+      {from:'q0',read:'b',pop:'b',push:['b','b'],to:'q0',label:'q0, b, b → push b'},
+      {from:'q0',read:'c',pop:'a',push:['a'],to:'q1',label:'q0, c, a → pivot at c'},
+      {from:'q0',read:'c',pop:'b',push:['b'],to:'q1',label:'q0, c, b → pivot at c'},
+      {from:'q0',read:'c',pop:'Z',push:['Z'],to:'q1',label:'q0, c, Z → pivot (empty w)'},
+      {from:'q1',read:'a',pop:'a',push:[],to:'q1',label:'q1, a, a → pop'},
+      {from:'q1',read:'b',pop:'b',push:[],to:'q1',label:'q1, b, b → pop'},
+      {from:'q1',read:'',pop:'Z',push:['Z'],to:'q2',label:'q1, ε, Z → accept'},
+    ]
+  }
+};
+
+let currentLang = 'anbn';
+let simSteps = [];
+let simIdx = 0;
+let autoTimer = null;
+
+function selectLang(key, btn) {
+  currentLang = key;
+  document.querySelectorAll('.lang-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updateLangInfo();
+  renderExamples();
+  renderTransitionTable();
+  resetSim();
+}
+
+function updateLangInfo() {
+  const L = LANGS[currentLang];
+  document.getElementById('langInfo').innerHTML = L.desc;
+}
+
+function renderExamples() {
+  const L = LANGS[currentLang];
+  const row = document.getElementById('exampleRow');
+  row.innerHTML = L.examples.map(e =>
+    `<button class="example-pill ${e.accept?'accept':'reject'}" onclick="loadExample('${e.str}')" title="${e.accept?'Accepted':'Rejected'}">${e.str===''?'ε':e.str}</button>`
+  ).join('');
+}
+
+function loadExample(str) {
+  document.getElementById('inputStr').value = str;
+  runSim();
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'transitions') renderTransitionTable();
+}
+
+// PDA simulation engine
+function simulate(str, L) {
+  const steps = [];
+  let state = L.startState;
+  let stack = [...L.startStack];
+  let pos = 0;
+  const chars = str.split('');
+
+  function findTrans(st, ch, top) {
+    for (let i = 0; i < L.transitions.length; i++) {
+      const t = L.transitions[i];
+      if (t.from === st && t.read === ch && t.pop === top) return { t, i };
+    }
+    return null;
+  }
+
+  steps.push({ state, stack: [...stack], pos, phase: 'start', label: 'Initial configuration', transIdx: -1 });
+
+  let maxSteps = 300;
+  while (maxSteps-- > 0) {
+    const top = stack[stack.length - 1];
+    if (!top) {
+      steps.push({ state, stack: [...stack], pos, phase: 'error', label: 'Stack underflow — rejected', transIdx: -1 });
+      break;
+    }
+    const ch = pos < chars.length ? chars[pos] : '';
+
+    let found = findTrans(state, ch, top);
+    if (!found) found = findTrans(state, '', top);
+
+    if (!found) {
+      const accepted = L.acceptStates.has(state) && pos === chars.length;
+      steps.push({
+        state, stack: [...stack], pos,
+        phase: accepted ? 'accept' : 'reject',
+        label: accepted ? 'Accepted — input consumed in accepting state' : 'No valid transition — rejected',
+        transIdx: -1
+      });
+      break;
+    }
+
+    const { t, i } = found;
+    const oldPos = pos;
+    if (t.read !== '') pos++;
+    stack.pop();
+    for (let k = t.push.length - 1; k >= 0; k--) stack.push(t.push[k]);
+    state = t.to;
+
+    const isEnd = pos >= chars.length && L.acceptStates.has(state);
+    steps.push({
+      state, stack: [...stack], pos,
+      phase: isEnd ? 'acc-candidate' : 'normal',
+      label: t.label,
+      transIdx: i,
+      consumed: t.read !== '' ? chars[oldPos] : null
+    });
+  }
+
+  if (!steps.some(s => s.phase === 'accept' || s.phase === 'reject' || s.phase === 'error')) {
+    const accepted = L.acceptStates.has(state) && pos === chars.length;
+    steps.push({
+      state, stack: [...stack], pos,
+      phase: accepted ? 'accept' : 'reject',
+      label: accepted ? 'Accepted' : 'Rejected — max steps reached',
+      transIdx: -1
+    });
+  }
+
+  return steps;
+}
+
+function onInput() {
+  resetSim(true);
+}
+
+function runSim() {
+  const str = document.getElementById('inputStr').value;
+  const L = LANGS[currentLang];
+  simSteps = simulate(str, L);
+  simIdx = 0;
+  document.getElementById('stepControls').style.display = 'flex';
+  document.getElementById('resultBanner').className = 'result-banner';
+  renderStep(0);
+}
+
+function resetSim(silent = false) {
+  clearAuto();
+  simSteps = [];
+  simIdx = 0;
+  document.getElementById('stepControls').style.display = 'none';
+  document.getElementById('resultBanner').className = 'result-banner';
+  if (!silent) {
+    renderTape('', 0, []);
+    renderStack([]);
+    renderStateBadge('—', false);
+    renderTrace([]);
+  }
+  updateProgress();
+}
+
+function stepNext() {
+  if (simIdx < simSteps.length - 1) { simIdx++; renderStep(simIdx); }
+}
+function stepPrev() {
+  if (simIdx > 0) { simIdx--; renderStep(simIdx); }
+}
+
+function autoPlay() {
+  if (autoTimer) { clearAuto(); return; }
+  const btn = document.getElementById('playBtn');
+  btn.innerHTML = '<i class="ti ti-player-pause"></i> Pause';
+  autoTimer = setInterval(() => {
+    if (simIdx >= simSteps.length - 1) { clearAuto(); return; }
+    simIdx++;
+    renderStep(simIdx);
+  }, 650);
+}
+
+function clearAuto() {
+  clearInterval(autoTimer);
+  autoTimer = null;
+  const btn = document.getElementById('playBtn');
+  if (btn) btn.innerHTML = '<i class="ti ti-player-play"></i> Auto';
+}
+
+function renderStep(idx) {
+  const step = simSteps[idx];
+  if (!step) return;
+  const str = document.getElementById('inputStr').value;
+  renderTape(str, step.pos, step.stack);
+  renderStack(step.stack);
+  const L = LANGS[currentLang];
+  renderStateBadge(step.state, L.acceptStates.has(step.state));
+  renderTrace(simSteps.slice(0, idx + 1));
+  updateProgress();
+
+  const banner = document.getElementById('resultBanner');
+  if (step.phase === 'accept') {
+    banner.className = 'result-banner accepted';
+    document.getElementById('resultIcon').className = 'ti ti-circle-check';
+    document.getElementById('resultText').textContent = 'Accepted — string belongs to the language';
+  } else if (step.phase === 'reject' || step.phase === 'error') {
+    banner.className = 'result-banner rejected';
+    document.getElementById('resultIcon').className = 'ti ti-circle-x';
+    document.getElementById('resultText').textContent = 'Rejected — string does not belong to the language';
+  } else {
+    banner.className = 'result-banner';
+  }
+
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === simSteps.length - 1;
+
+  // Highlight active transition row in table
+  document.querySelectorAll('.trans-table tr').forEach(r => r.classList.remove('highlight-row'));
+  if (step.transIdx >= 0) {
+    const rows = document.querySelectorAll('.trans-table tbody tr');
+    if (rows[step.transIdx]) rows[step.transIdx].classList.add('highlight-row');
+  }
+}
+
+function renderTape(str, pos, stack) {
+  const tape = document.getElementById('tape');
+  if (!str && str !== '0') {
+    tape.innerHTML = '<div class="tape-cell empty">–</div>';
+    return;
+  }
+  const chars = str.split('');
+  if (chars.length === 0) {
+    tape.innerHTML = '<div class="tape-cell empty">ε</div>';
+    return;
+  }
+  tape.innerHTML = chars.map((c, i) => {
+    const cls = i < pos ? 'processed' : i === pos ? 'current' : '';
+    return `<div class="tape-cell ${cls}">${c}${i === pos ? '<span class="tape-pointer">▲</span>' : ''}</div>`;
+  }).join('');
+}
+
+function renderStack(stack) {
+  const area = document.getElementById('stackArea');
+  if (!stack || stack.length === 0) {
+    area.innerHTML = '<div class="empty-stack"><i class="ti ti-stack-2"></i>empty</div>';
+    return;
+  }
+  const items = [...stack].reverse();
+  area.innerHTML = items.map((s, i) =>
+    `<div class="stack-cell${i === 0 ? ' new' : ''}">${s}</div>`
+  ).join('') + '<div class="stack-bottom">bottom</div>';
+}
+
+function renderStateBadge(state, isAccepting) {
+  document.getElementById('stateBadge').innerHTML =
+    `<span class="state-badge${isAccepting ? ' accepting' : ''}">
+      <span class="state-dot"></span>${state}
+      ${isAccepting ? '<span style="font-size:11px;opacity:.7">(accepting)</span>' : ''}
+    </span>`;
+}
+
+function renderTrace(steps) {
+  const list = document.getElementById('traceList');
+  list.innerHTML = steps.map((s, i) => {
+    const isLast = i === steps.length - 1;
+    const isErr = s.phase === 'reject' || s.phase === 'error';
+    return `<div class="trace-item${isLast ? ' active' : ''}${isErr && isLast ? ' error' : ''}">${s.label || '—'}</div>`;
+  }).join('');
+  list.scrollTop = list.scrollHeight;
+}
+
+function updateProgress() {
+  const total = simSteps.length;
+  const pct = total > 1 ? Math.round(simIdx / (total - 1) * 100) : 0;
+  document.getElementById('stepFill').style.width = pct + '%';
+  document.getElementById('stepLabel').textContent = (simIdx + 1) + ' / ' + total;
+}
+
+function renderTransitionTable() {
+  const L = LANGS[currentLang];
+  const rows = L.transitions.map(t => `
+    <tr>
+      <td>${t.from}</td>
+      <td>${t.read === '' ? 'ε' : t.read}</td>
+      <td>${t.pop}</td>
+      <td>${t.push.length === 0 ? 'ε' : t.push.join('')}</td>
+      <td>${t.to}</td>
+    </tr>`).join('');
+  document.getElementById('transTableWrap').innerHTML = `
+    <table class="trans-table">
+      <thead>
+        <tr>
+          <th>From state</th>
+          <th>Input read</th>
+          <th>Stack pop</th>
+          <th>Stack push</th>
+          <th>To state</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p class="table-note">
+      ε = epsilon (empty string / empty push). Push column: top of stack first.<br>
+      Accepting states: ${[...L.acceptStates].join(', ')} &nbsp;|&nbsp; Start state: ${L.startState} &nbsp;|&nbsp; Initial stack: ${L.startStack.join('')}
+    </p>`;
+}
+
+// Init
+updateLangInfo();
+renderExamples();
+renderTransitionTable();
+</script>
+</body>
+</html>
